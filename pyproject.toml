@@ -1,0 +1,38 @@
+
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "earth-twin-engine"
+version = "0.1.0"
+description = "A modular Earth science data exploration and trend analysis platform."
+readme = "README.md"
+requires-python = ">=3.12,<3.15"
+license = { text = "MIT" }
+authors = [
+    { name = "Earth Twin Engine Team" }
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.9"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra --import-mode=importlib"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

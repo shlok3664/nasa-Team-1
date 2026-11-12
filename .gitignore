@@ -1,0 +1,45 @@
+
+# Python environments
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyd
+
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Packaging
+build/
+dist/
+*.egg-info/
+
+# Tool caches
+.ruff_cache/
+.mypy_cache/
+
+# IDE
+.vscode/
+.idea/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local scientific datasets
+data/local/
+data/cache/
