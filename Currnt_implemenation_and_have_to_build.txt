@@ -1,0 +1,1714 @@
+# Earth Twin Engine
+## Project Progress Report, Technical Summary & Development Handover
+
+**Project:** Earth Twin Engine (ETE)  
+**Challenge:** NASA Space Apps Challenge — Earth Systems Trend Detective  
+**Report type:** Development Progress & Technical Handover  
+**Current status:** 22 of 24 planned backend modules completed  
+**Next development stage:** Visualization and Scientific Interpretation
+
+---
+
+# 1. Project Overview
+
+## 1.1 What is Earth Twin Engine?
+
+Earth Twin Engine (ETE) is a modular Earth science data exploration, analysis, and trend-detection platform developed for the NASA Space Apps Challenge.
+
+The primary objective is to help users explore environmental datasets, identify long-term patterns, compare geographical regions, perform statistical tests, and understand significant changes in Earth's environmental systems.
+
+The project is designed around the idea that environmental datasets should not be analyzed independently. Instead, different Earth science variables and geographical regions should be brought together through a unified analytical platform.
+
+For example, a user should eventually be able to:
+
+- Explore environmental variables such as rainfall, temperature, humidity, vegetation, and other Earth science indicators.
+- Discover available datasets and their sources.
+- Select geographical regions for analysis.
+- Retrieve and validate environmental observations.
+- Normalize measurements into compatible units.
+- Organize observations into time series.
+- Identify increasing or decreasing trends.
+- Determine whether observed trends are statistically significant.
+- Compare environmental trends across multiple geographical regions.
+- Visualize results using scientific charts and geographical maps.
+- Generate understandable scientific interpretations of the results.
+
+ETE is intended to be more than a dashboard. It is a reusable analytical engine that can support different Earth science datasets and scientific analysis workflows.
+
+## 1.2 Main objectives
+
+The project follows these objectives:
+
+1. **Unified environmental data management:** Provide a common structure for environmental variables, datasets, geographical regions, and time-series observations.
+
+2. **Modular scientific architecture:** Keep individual responsibilities separate so that modules can be developed, tested, and extended independently.
+
+3. **Scientific reliability:** Use established statistical techniques instead of relying on visual patterns alone.
+
+4. **Regional comparison:** Enable users to investigate how environmental trends differ between geographical regions.
+
+5. **Explainability:** Present analysis results with appropriate scientific context, assumptions, limitations, and uncertainty.
+
+6. **Extensibility:** Make it possible to add new environmental variables, data providers, statistical methods, and visualization capabilities without restructuring the entire application.
+
+---
+
+# 2. Technology Stack
+
+## Backend and scientific engine
+
+- Python 3.14.6
+- Python standard library
+- Pytest for automated testing
+- Ruff for linting and formatting
+- Setuptools for package configuration
+
+The backend is intentionally being developed without unnecessary external scientific dependencies at this stage.
+
+In particular, the statistical testing module implements its numerical routines directly rather than depending on SciPy.
+
+## Planned frontend
+
+The frontend is planned around:
+
+- React
+- TypeScript
+- Vite
+- Plotly.js for scientific charts
+- Leaflet for geographical maps
+
+**Important:** The frontend has not yet been started. The Python backend and its application modules must be completed first.
+
+## Development environment
+
+The repository is developed on Windows.
+
+Project location:
+
+`D:\Twin_engine_for_nasa_spcace_app_challenge\nasa-Team-1`
+
+A Python virtual environment is used for development. The `.venv` directory must not be committed to Git.
+
+---
+
+# 3. Architecture Overview
+
+ETE follows a layered, modular architecture.
+
+The central idea is to separate scientific data structures, application workflows, scientific analysis, and presentation.
+
+The application should not depend directly on the frontend framework or on a particular scientific data provider.
+
+## 3.1 High-level architecture
+
+```text
+                    FRONTEND
+              React + TypeScript
+                       |
+                       |
+              Visualization API
+                       |
+                       |
+              APPLICATION LAYER
+                       |
+     +-----------------+------------------+
+     |                 |                  |
+ Data Management   Scientific Analysis   Presentation
+     |                 |                  |
+     |                 |                  |
+ Variable          Trend Analysis       Visualization
+ Discovery         Statistical Testing  Scientific
+ Data Sources      Regional Comparison   Interpretation
+ Regions
+ Acquisition
+ Validation
+ Normalization
+ Time Series
+     |                 |                  |
+     +-----------------+------------------+
+                       |
+                 DOMAIN LAYER
+                       |
+       Earth Variables / Time Series
+       Spatial Regions / Observations
+       Temporal Resolutions / Metadata
+                       |
+                       |
+               EXTERNAL DATA SOURCES
+                       |
+       Satellite / Climate / Weather /
+          Environmental Data Providers
+```
+
+This is a conceptual architecture. The actual Python implementation uses application modules, domain objects, services, handlers, commands, queries, and events.
+
+## 3.2 Application Core
+
+The Application Core provides the infrastructure used by the rest of the application.
+
+Its responsibilities include:
+
+- Application lifecycle management.
+- Module registration and dependency management.
+- Service registration and resolution.
+- Event publication and subscription.
+- Command dispatching.
+- Query dispatching.
+- Configuration management.
+- Logging.
+- Error handling.
+- Resource management.
+
+This means scientific modules do not need to independently implement infrastructure such as event handling or application lifecycle management.
+
+## 3.3 Module communication
+
+The application uses three important communication mechanisms.
+
+**Commands:** Represent requests to perform operations that may change application state or initiate work.
+
+**Queries:** Represent requests to retrieve information without performing a state-changing operation.
+
+**Events:** Represent things that have already happened.
+
+For example:
+
+```text
+AcquireDatasetCommand
+          |
+          v
+DataAcquisitionHandler
+          |
+          v
+DatasetAcquiredEvent
+          |
+          v
+Other interested modules
+```
+
+The event dispatcher supports subscriptions, publication, and dispatch-result reporting.
+
+Application events contain:
+
+- Event ID
+- Occurrence timestamp
+- Optional correlation ID
+
+Correlation IDs help trace related operations across modules.
+
+---
+
+# 4. Development Progress
+
+The backend roadmap consists of 24 modules.
+
+**Current completion: 22 / 24 modules.**
+
+<escape>
+| Phase | Modules | Status |
+|---|---|---|
+| Application Core | 1–12 | Complete |
+| Data Management and Analysis | 13–22 | Complete |
+| Visualization | 23 | Pending |
+| Scientific Interpretation | 24 | Pending |
+| Frontend | After backend completion | Not started |
+</escape>
+
+The following sections explain what has been implemented.
+
+---
+
+# 5. Phase 1 — Application Core (Modules 1–12)
+
+All twelve foundational modules are complete.
+
+These modules provide the infrastructure on which the rest of ETE operates.
+
+## Module 1 — Module Lifecycle Contracts
+
+Implemented the foundational application module contracts.
+
+Responsibilities:
+
+- Module metadata.
+- Module lifecycle states.
+- Application module interface.
+- Lifecycle-related contracts.
+
+The module system provides a consistent structure for implementing application features.
+
+## Module 2 — Configuration and Service Registry
+
+Implemented:
+
+- Application configuration.
+- Service registration.
+- Service resolution.
+- Service lookup.
+- Service existence checks.
+- Thread-safe service registry.
+- Service unregistration.
+
+The registry allows modules to access shared application services without directly constructing their dependencies.
+
+## Module 3 — Module Manager
+
+Implemented module lifecycle orchestration.
+
+Features include:
+
+- Module registration.
+- Dependency management.
+- Dependency-aware initialization.
+- Topological initialization ordering.
+- Reverse-order shutdown.
+- Lifecycle error handling.
+
+Modules can declare dependencies, and the manager handles their initialization order.
+
+## Module 4 — Event Dispatcher
+
+Implemented the event-driven communication infrastructure.
+
+Features:
+
+- Event subscription.
+- Event unsubscription.
+- Event publication.
+- Exact and subclass event matching.
+- Dispatch result reporting.
+- Handler failure collection.
+
+The dispatcher allows modules to communicate without tightly coupling their implementations.
+
+## Module 5 — Logging
+
+Implemented centralized application logging infrastructure.
+
+This provides a consistent approach to recording application activity and diagnosing failures.
+
+## Module 6 — Error Handling
+
+Implemented common application error-handling contracts and mechanisms.
+
+This establishes consistent handling of application and module-level errors.
+
+## Module 7 — Resource Manager
+
+Implemented resource management infrastructure for application components.
+
+This provides a centralized mechanism for managing resources throughout the application lifecycle.
+
+## Module 8 — Application Runtime and Launcher
+
+Implemented:
+
+- Application runtime.
+- Application launcher.
+- Runtime lifecycle coordination.
+- Shared application context integration.
+
+The launcher provides the main application initialization and startup pathway.
+
+## Module 9 — Configuration Loader
+
+Implemented configuration loading from external configuration files.
+
+The application can be initialized using loaded configuration rather than relying exclusively on hardcoded settings.
+
+## Module 10 — Command Dispatcher
+
+Implemented command dispatching infrastructure.
+
+Commands are associated with handlers, allowing application operations to be executed through a consistent interface.
+
+## Module 11 — Query Dispatcher
+
+Implemented query dispatching infrastructure.
+
+Queries allow modules to expose retrieval operations through handlers without directly exposing their internal implementation.
+
+## Module 12 — Messaging Integration
+
+Integrated the event, command, and query systems into the application launcher.
+
+The launcher exposes and registers:
+
+- EventDispatcher
+- CommandDispatcher
+- QueryDispatcher
+
+A configuration-file-based launcher is also available.
+
+**Phase 1 result:** The application infrastructure is complete and provides the foundation for all subsequent modules.
+
+---
+
+# 6. Phase 2 — Data Management and Scientific Analysis (Modules 13–22)
+
+This phase implements the main environmental data and analytical functionality.
+
+All ten modules are complete.
+
+## Module 13 — Variable Discovery
+
+Package:
+
+`application/modules/variable_discovery/`
+
+Purpose:
+
+Manage the environmental variables supported by ETE.
+
+Examples include:
+
+- Temperature
+- Rainfall
+- Humidity
+- Atmospheric variables
+- Hydrological variables
+- Ocean-related variables
+- Land and vegetation indicators
+
+Implemented components:
+
+- VariableCatalog
+- GetEarthVariableQuery
+- DiscoverEarthVariablesQuery
+- Query handlers
+- VariableDiscoveryModule
+
+The catalog supports:
+
+- Registering variables.
+- Unregistering variables.
+- Retrieving variables by ID.
+- Finding variables.
+- Discovering variables using filters.
+- Filtering by category, keyword, temporal resolution, and data source.
+- Listing all registered variables.
+
+The module uses the domain-level EarthVariable and VariableMetadata contracts.
+
+## Module 14 — Data Source Manager
+
+Package:
+
+`application/modules/data_source_manager/`
+
+Purpose:
+
+Manage environmental data providers through a common adapter interface.
+
+Implemented components:
+
+- DataSourceAdapter protocol.
+- DataSourceManager.
+- Source registration and unregistration.
+- Source discovery.
+- Compatibility checking.
+- Explicit source selection.
+- Automatic source resolution.
+- Availability checking.
+- Retrieval validation.
+
+The adapter abstraction allows different data providers to be integrated without changing the rest of the application.
+
+For example, a future provider could retrieve satellite or climate data while implementing the same adapter contract.
+
+The manager also validates retrieved datasets and their associated request and provenance information.
+
+## Module 15 — Region Manager
+
+Package:
+
+`application/modules/region_manager/`
+
+Purpose:
+
+Manage geographical regions used throughout the application.
+
+Implemented components:
+
+- RegionManager.
+- Region registration.
+- Region unregistration.
+- Region retrieval.
+- Region listing.
+- Region containment queries.
+- Duplicate-region and missing-region errors.
+
+The geographical implementation uses SpatialBoundary and GeographicRegion.
+
+An important feature is support for boundaries crossing the antimeridian.
+
+This matters when working with geographical regions that cross the international date line.
+
+## Module 16 — Data Acquisition
+
+Package:
+
+`application/modules/data_acquisition/`
+
+Purpose:
+
+Coordinate the retrieval of environmental datasets.
+
+Implemented components:
+
+- AcquireDatasetCommand.
+- DataAcquisitionHandler.
+- DatasetAcquiredEvent.
+- DatasetAcquisitionFailedEvent.
+- DataAcquisitionModule.
+
+The acquisition workflow:
+
+1. Receives an acquisition command.
+2. Resolves the requested environmental variable.
+3. Resolves the geographical region.
+4. Constructs a data request.
+5. Delegates retrieval to DataSourceManager.
+6. Publishes a success or failure event.
+7. Preserves correlation information.
+
+The acquisition handler does not need to know the internal implementation of individual data providers.
+
+## Module 17 — Data Validation
+
+Package:
+
+`application/modules/data_validation/`
+
+Purpose:
+
+Validate acquired environmental datasets before further processing.
+
+Implemented components:
+
+- ValidationSeverity.
+- ValidationIssue.
+- ValidationResult.
+- DatasetValidator.
+- DataValidationHandler.
+- ValidateDatasetCommand.
+- DatasetValidatedEvent.
+- DataValidationModule.
+
+The validator checks:
+
+- Variable consistency.
+- Source consistency.
+- Temporal resolution.
+- Geographical region.
+- Time range.
+- Missing observations.
+- Duplicate time-series identifiers.
+
+An important architectural distinction is that Dataset and TimeSeries are separate domain objects. Observations are contained in time series rather than directly inside Dataset.
+
+The validation module helps prevent inconsistent data from entering later scientific workflows.
+
+## Module 18 — Data Normalization
+
+Package:
+
+`application/modules/data_normalization/`
+
+Purpose:
+
+Normalize environmental measurements into compatible units and standardized representations.
+
+Implemented components:
+
+- UnitConversionRegistry.
+- DataNormalizer.
+- NormalizationResult.
+- DataNormalizationHandler.
+- DataNormalizationModule.
+- Normalization commands and events.
+
+Features:
+
+- Explicit unit conversions.
+- Affine conversion support.
+- Canonical variable units.
+- UTC timestamp normalization.
+- Preservation of missing observations.
+- Preservation of geographical coordinate information.
+- Dataset provenance lineage.
+- Transformation descriptions.
+
+For example, measurements expressed in Celsius can be converted into Kelvin when the variable's canonical unit requires it.
+
+The implementation deliberately avoids guessing unsupported unit conversions.
+
+Missing values remain missing; they are not silently converted into zero.
+
+## Module 19 — Time-Series Management
+
+Package:
+
+`application/modules/time_series_management/`
+
+Purpose:
+
+Manage environmental time series and provide temporal and spatial aggregation functionality.
+
+Implemented components:
+
+- TimeSeriesManager.
+- TemporalAggregator.
+- SpatialAggregator.
+- MissingPeriodDetector.
+- AggregationMethod.
+- Time-series commands and events.
+- TimeSeriesManagementModule.
+
+Supported aggregation methods:
+
+- Mean
+- Sum
+- Minimum
+- Maximum
+- Median
+
+The manager supports:
+
+- Registering time series.
+- Unregistering time series.
+- Retrieving individual series.
+- Retrieving all series.
+- Finding series by environmental variable.
+- Checking whether a series exists.
+- Counting registered series.
+
+Aggregation metadata is attached to derived time series so that the application can distinguish aggregated values from original observations.
+
+Supported temporal resolutions include:
+
+- Hourly
+- Daily
+- Monthly
+- Annual
+- Irregular
+
+## Module 20 — Trend Analysis
+
+Package:
+
+`application/modules/trend_analysis/`
+
+Purpose:
+
+Analyze environmental time series to identify temporal trends.
+
+Implemented scientific methods include:
+
+- Mann–Kendall trend analysis.
+- Sen's slope estimation.
+- Linear slope estimation.
+- Trend strength classification.
+- Trend direction classification.
+- Coefficient of determination.
+
+Trend directions:
+
+- INCREASING
+- DECREASING
+- STABLE
+- INSUFFICIENT_DATA
+
+Trend strengths:
+
+- VERY_WEAK
+- WEAK
+- MODERATE
+- STRONG
+- VERY_STRONG
+- UNDETERMINED
+
+The trend analysis result records:
+
+- Series ID.
+- Variable ID.
+- Temporal resolution.
+- Trend direction.
+- Trend strength.
+- Input, valid, and missing observation counts.
+- Linear slope per day.
+- Sen's slope per day.
+- Linear intercept.
+- Coefficient of determination.
+- Kendall tau.
+- P-value.
+- Significance level.
+- Analysis timestamp.
+
+The implementation also accounts for an important statistical distinction: a positive slope does not automatically mean that a trend is statistically significant.
+
+The Mann–Kendall significance result influences the final trend classification.
+
+## Module 21 — Statistical Testing
+
+Package:
+
+`application/modules/statistical_testing/`
+
+Purpose:
+
+Provide a reusable statistical testing system for environmental analysis.
+
+Three statistical methods have been implemented:
+
+### 1. Mann–Kendall Test
+
+A non-parametric test used to evaluate whether a time series exhibits a statistically significant monotonic trend.
+
+The implementation includes:
+
+- Tie-corrected variance.
+- Continuity correction.
+- Asymptotic normal p-value calculation.
+
+### 2. One-Sample T-Test
+
+Tests whether the mean of one sample differs significantly from a specified reference value.
+
+Includes:
+
+- Test statistic.
+- P-value.
+- Degrees of freedom.
+- Confidence interval for the mean difference.
+
+### 3. Welch's T-Test
+
+Compares the means of two independent samples without assuming equal population variances.
+
+Includes:
+
+- Welch test statistic.
+- Degrees of freedom.
+- P-value.
+- Confidence interval for the mean difference.
+
+The module also implements numerical routines for:
+
+- Regularized incomplete beta function.
+- Student's t-distribution CDF.
+- Student's t quantile using bisection.
+
+The module does not require SciPy.
+
+Statistical results preserve:
+
+- Test method.
+- Input series IDs.
+- Test statistic.
+- P-value.
+- Significance level.
+- Significance decision.
+- Estimated effect.
+- Degrees of freedom.
+- Sample sizes.
+- Valid and missing observation counts.
+- Confidence intervals.
+- Assumptions.
+- Warnings.
+- Analysis timestamp.
+
+The statistical testing service uses a registry of test strategies, making it possible to add additional methods later.
+
+## Module 22 — Regional Comparison
+
+Package:
+
+`application/modules/regional_comparison/`
+
+Purpose:
+
+Compare environmental trends across multiple geographical regions.
+
+This module builds on:
+
+- Region Manager.
+- Time-Series Management.
+- Trend Analysis.
+
+Implemented components:
+
+- RegionalTrendResult.
+- RegionalComparisonResult.
+- RegionalComparisonService.
+- CompareRegionsCommand.
+- RegionalComparisonCompletedEvent.
+- RegionalComparisonFailedEvent.
+- RegionalComparisonModule.
+
+The comparison workflow:
+
+1. Receives a variable and geographical region selection.
+2. Retrieves registered time series for the variable.
+3. Determines which series belong to the selected regions.
+4. Analyzes each series independently.
+5. Aggregates the results for each region.
+6. Calculates regional summary metrics.
+7. Ranks regions based on the absolute mean Sen's slope.
+
+Regional summaries include:
+
+- Mean linear slope.
+- Mean Sen's slope.
+- Mean Kendall tau.
+- Trend direction.
+- Increasing, decreasing, stable, and insufficient-data counts.
+- Number of statistically significant trends.
+- Total observation counts.
+- Valid observation counts.
+- Missing observation counts.
+
+The comparison service supports overlapping geographical boundaries.
+
+The ranking uses the absolute mean Sen's slope, which measures the magnitude of change. It should not be interpreted as a ranking of environmental severity without additional variable-specific context.
+
+**Phase 2 result:** ETE can now manage environmental variables, regions, data acquisition, validation, normalization, time series, trend analysis, statistical testing, and regional comparison.
+
+---
+
+# 7. Domain Layer
+
+The domain layer provides the core scientific objects used by the application modules.
+
+Important domain entities and value objects include:
+
+## EarthVariable
+
+Represents an environmental variable.
+
+Contains:
+
+- Variable ID.
+- Name.
+- Description.
+- Variable category.
+- Variable metadata.
+
+## VariableMetadata
+
+Contains:
+
+- Unit.
+- Supported temporal resolutions.
+- Spatial resolution in metres.
+- Temporal coverage.
+- Keywords.
+- Supported data source IDs.
+
+## VariableCategory
+
+The supported categories include:
+
+- ATMOSPHERE
+- OCEAN
+- LAND
+- HYDROLOGY
+- CRYOSPHERE
+- BIOSPHERE
+- OTHER
+
+## GeographicRegion
+
+Represents a named geographical region.
+
+Contains:
+
+- Region ID.
+- Name.
+- Spatial boundary.
+- Description.
+
+## SpatialBoundary
+
+Represents the geographical extent of a region using:
+
+- South latitude.
+- North latitude.
+- West longitude.
+- East longitude.
+
+Supports geographical containment and antimeridian-aware boundaries.
+
+## SpatialCoordinate
+
+Represents a geographical coordinate using latitude and longitude.
+
+## TimeSeries
+
+Represents observations of a particular environmental variable at a particular location.
+
+Contains:
+
+- Series ID.
+- Environmental variable.
+- Geographical location.
+- Temporal resolution.
+- Observation points.
+- Optional aggregation metadata.
+
+Provides properties for:
+
+- Total observation count.
+- Valid observation count.
+- Missing observation count.
+- Start timestamp.
+- End timestamp.
+
+## TimeSeriesPoint
+
+Represents an individual observation:
+
+- Timestamp.
+- Value.
+
+The value can be `None` to represent missing data.
+
+This is important because missing environmental observations must not be confused with actual zero measurements.
+
+---
+
+# 8. Testing and Code Quality
+
+Testing has been performed throughout development rather than being postponed until the end.
+
+The project uses:
+
+- Pytest.
+- Ruff linting.
+- Ruff formatting checks.
+
+The project configuration includes:
+
+```toml
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra --import-mode=importlib"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+```
+
+The importlib pytest mode was configured to avoid test-module import collisions.
+
+## Standard verification commands
+
+Run these commands from the repository root:
+
+```powershell
+ruff check src tests
+ruff format --check src tests
+pytest
+```
+
+If formatting needs correction:
+
+```powershell
+ruff format src tests
+```
+
+Then rerun all three verification commands.
+
+## Testing progress
+
+- Application Core: completed and tested.
+- Modules 13–22: completed and tested.
+- Several integration and statistical edge cases were discovered and corrected during development.
+- The full test suite passed after the completion of Module 22.
+
+The exact latest total assertion count should be taken from the current repository test output rather than assumed from an earlier run.
+
+---
+
+# 9. Current Project Structure
+
+The following is a conceptual structure of the main backend organization. Exact filenames may evolve as the remaining modules are implemented.
+
+```text
+nasa-Team-1/
+│
+├── pyproject.toml
+├── README.md
+├── .gitignore
+│
+├── src/
+│   └── earth_twin_engine/
+│       │
+│       ├── application/
+│       │   │
+│       │   ├── core/
+│       │   ├── events/
+│       │   ├── commands/
+│       │   ├── queries/
+│       │   │
+│       │   └── modules/
+│       │       ├── variable_discovery/
+│       │       ├── data_source_manager/
+│       │       ├── region_manager/
+│       │       ├── data_acquisition/
+│       │       ├── data_validation/
+│       │       ├── data_normalization/
+│       │       ├── time_series_management/
+│       │       ├── trend_analysis/
+│       │       ├── statistical_testing/
+│       │       ├── regional_comparison/
+│       │       │
+│       │       ├── visualization/              [Pending]
+│       │       │
+│       │       └── scientific_interpretation/ [Pending]
+│       │
+│       └── domain/
+│           ├── variables/
+│           ├── geography/
+│           ├── datasets/
+│           ├── time_series/
+│           ├── temporal/
+│           └── provenance/
+│
+└── tests/
+    └── unit/
+        ├── application/
+        │   ├── core/
+        │   └── modules/
+        │       ├── variable_discovery/
+        │       ├── data_source_manager/
+        │       ├── region_manager/
+        │       ├── data_acquisition/
+        │       ├── data_validation/
+        │       ├── data_normalization/
+        │       ├── time_series_management/
+        │       ├── trend_analysis/
+        │       ├── statistical_testing/
+        │       ├── regional_comparison/
+        │       │
+        │       ├── visualization/              [Pending]
+        │       └── scientific_interpretation/ [Pending]
+        │
+        └── domain/
+```
+
+This is an architectural overview, not a guaranteed exact directory listing. The actual repository should be used when creating new files.
+
+---
+
+# 10. Remaining Backend Development
+
+Only two planned Python application modules remain.
+
+## Module 23 — Visualization
+
+**Status: Not yet implemented.**
+
+Package:
+
+`application/modules/visualization/`
+
+### Purpose
+
+Prepare environmental and scientific analysis results for presentation through a frontend.
+
+The Visualization module should not implement actual chart rendering or map rendering in Python.
+
+Its responsibility is to convert existing domain and analytical objects into presentation-ready data structures.
+
+The frontend will consume these structures and render them using Plotly.js and Leaflet.
+
+### Required presentation components
+
+1. Variable Explorer.
+2. Geographic Region Selector.
+3. Time-Series Viewer.
+4. Trend Chart.
+5. Regional Comparison Map.
+6. Statistical Results Panel.
+7. Data Metadata Panel.
+
+### Expected functionality
+
+**Variable Explorer**
+
+- List available environmental variables.
+- Filter by category.
+- Filter by keyword.
+- Filter by temporal resolution.
+- Filter by data source.
+
+**Time-Series Viewer**
+
+- Retrieve time series by ID.
+- Expose timestamps and observations.
+- Preserve missing values.
+- Distinguish raw observations from aggregated observations.
+- Include aggregation metadata when available.
+
+**Trend Chart**
+
+- Present increasing, decreasing, stable, and insufficient-data trends.
+- Expose slope and trend strength.
+- Include statistical significance information.
+- Clearly distinguish an estimated trend from raw observations.
+
+**Regional Comparison Map**
+
+- Prepare regional trend summaries.
+- Expose geographical boundaries and regional metrics.
+- Preserve antimeridian information.
+- Avoid inventing geographical polygons or unsupported geometry.
+
+**Statistical Results Panel**
+
+- Present the test method.
+- Display test statistic and p-value.
+- Display significance level.
+- Display confidence intervals.
+- Expose assumptions and warnings.
+
+**Data Metadata Panel**
+
+- Display variable metadata.
+- Display temporal resolution.
+- Display geographical information.
+- Display observation counts.
+- Expose data provenance and aggregation information where available.
+
+### Important scientific presentation requirements
+
+The frontend must distinguish:
+
+- Raw observations.
+- Aggregated observations.
+- Estimated trends.
+- Statistically significant trends.
+- Uncertain results.
+- Insufficient-data results.
+
+A trend line must not automatically be presented as a statistically significant environmental change.
+
+### Planned implementation structure
+
+```text
+visualization/
+│
+├── __init__.py
+├── errors.py
+├── visualization_models.py
+├── visualization_service.py
+├── events.py
+└── visualization_module.py
+```
+
+Tests should cover:
+
+- Visualization model validation.
+- Variable discovery.
+- Time-series presentation.
+- Missing observation preservation.
+- Trend report generation.
+- Statistical results presentation.
+- Regional map data preparation.
+- Selection state.
+- Event subscriptions.
+- Module initialization and shutdown.
+
+### Event integration
+
+The module should subscribe to:
+
+- TrendAnalysisCompletedEvent.
+- StatisticalTestCompletedEvent.
+- RegionalComparisonCompletedEvent.
+
+It should prepare an appropriate presentation view and publish:
+
+`VisualizationReadyEvent`
+
+The event should retain the originating event ID and correlation ID where available.
+
+### Architectural constraints
+
+- Do not add a dependency on Plotly.js or Leaflet to Python.
+- Do not duplicate trend analysis or statistical testing.
+- Do not perform new scientific calculations simply to render an existing result.
+- Do not couple the visualization module directly to React.
+- Keep the module independently testable.
+
+---
+
+## Module 24 — Scientific Interpretation
+
+**Status: Not yet implemented.**
+
+Package:
+
+`application/modules/scientific_interpretation/`
+
+### Purpose
+
+Translate scientific analysis results into understandable explanations while preserving scientific accuracy.
+
+The module should help users understand what the analytical results mean, rather than simply displaying numerical values.
+
+For example:
+
+Instead of displaying only:
+
+```text
+Trend direction: INCREASING
+Sen's slope: 0.025
+P-value: 0.003
+```
+
+The system should be able to generate an explanation such as:
+
+```text
+The analyzed variable exhibits an increasing trend over
+the selected observation period.
+
+The estimated Sen's slope is positive, indicating an
+average increase over time.
+
+The statistical test indicates that the observed trend
+is statistically significant at the selected significance
+level.
+```
+
+The exact interpretation must depend on the variable's unit, temporal resolution, trend result, and statistical evidence.
+
+### Expected functionality
+
+**Trend Interpretation**
+
+- Explain increasing trends.
+- Explain decreasing trends.
+- Explain stable results.
+- Explain insufficient-data results.
+- Describe trend magnitude in the appropriate units.
+- Explain statistical significance.
+
+**Statistical Interpretation**
+
+- Explain p-values.
+- Explain significance levels.
+- Explain confidence intervals.
+- Explain sample sizes and missing observations.
+- Describe test assumptions and warnings.
+
+**Regional Interpretation**
+
+- Compare regional trend directions.
+- Identify differences in trend magnitudes.
+- Highlight regions with statistically significant trends.
+- Explain uncertainty in regional summaries.
+
+**Scientific Limitations**
+
+The interpretation system must not:
+
+- Claim causation from correlation.
+- Treat statistical significance as practical importance.
+- Invent missing data.
+- Overstate confidence.
+- Treat insufficient data as evidence of no change.
+- Ignore assumptions and methodological limitations.
+
+### Possible output structure
+
+A scientific interpretation could include:
+
+- Summary.
+- Observed pattern.
+- Trend magnitude.
+- Statistical evidence.
+- Regional comparison.
+- Confidence and uncertainty.
+- Data limitations.
+- Methodological notes.
+
+### Integration
+
+The module should reuse existing outputs from:
+
+- Trend Analysis.
+- Statistical Testing.
+- Regional Comparison.
+- Domain metadata.
+
+It must not reimplement those scientific algorithms.
+
+The module should publish interpretation-completion and failure events using the existing application event infrastructure.
+
+### Important design consideration
+
+Scientific interpretation should be explainable and traceable.
+
+Every claim should be grounded in an actual analytical result, measurement, or metadata field.
+
+If an interpretation cannot be supported by the available data, the system should explicitly state that limitation.
+
+---
+
+# 11. Frontend Development — After Modules 23 and 24
+
+**Status: Not started.**
+
+The frontend should begin only after the remaining backend modules are implemented and tested.
+
+The frontend team can then work against stable presentation and interpretation contracts.
+
+## 11.1 Planned technology
+
+- React.
+- TypeScript.
+- Vite.
+- Plotly.js.
+- Leaflet.
+
+## 11.2 Planned application sections
+
+### 1. Dashboard
+
+A general overview of environmental variables and available analyses.
+
+### 2. Variable Explorer
+
+Allows users to browse and select supported environmental variables.
+
+### 3. Region Selector
+
+Allows users to select geographical regions for analysis.
+
+### 4. Time-Series Analysis
+
+Displays observations over time, including missing values and aggregated data.
+
+### 5. Trend Analysis
+
+Displays estimated trends, slopes, direction, and significance information.
+
+### 6. Regional Comparison
+
+Displays geographical comparisons of environmental trends.
+
+### 7. Statistical Results
+
+Displays statistical test results and associated assumptions.
+
+### 8. Scientific Interpretation
+
+Displays readable explanations of the analysis results, including uncertainty and limitations.
+
+## 11.3 Suggested frontend structure
+
+```text
+frontend/
+│
+├── src/
+│   ├── components/
+│   ├── pages/
+│   ├── layouts/
+│   ├── features/
+│   │   ├── variables/
+│   │   ├── regions/
+│   │   ├── time-series/
+│   │   ├── trends/
+│   │   ├── statistics/
+│   │   ├── regional-comparison/
+│   │   └── interpretation/
+│   │
+│   ├── services/
+│   ├── api/
+│   ├── types/
+│   ├── hooks/
+│   └── App.tsx
+│
+├── package.json
+└── vite.config.ts
+```
+
+This is a proposed organization and can be adjusted when the frontend team begins.
+
+## 11.4 Backend integration
+
+The frontend will need a backend API layer.
+
+The API should expose operations for:
+
+- Listing variables.
+- Retrieving variable metadata.
+- Listing regions.
+- Retrieving available time series.
+- Requesting data acquisition.
+- Requesting trend analysis.
+- Running statistical tests.
+- Requesting regional comparison.
+- Retrieving visualization-ready results.
+- Retrieving scientific interpretations.
+
+The existing Python application modules should remain independent of HTTP and frontend-specific concerns.
+
+A separate API/transport layer should translate HTTP requests into application commands and queries.
+
+---
+
+# 12. Data Integration and External Providers
+
+Although the data-management architecture is implemented, the complete production data-provider ecosystem is not yet established.
+
+The DataSourceAdapter protocol and DataSourceManager provide the foundation for integrating providers.
+
+Potential future integrations include:
+
+- NASA Earth observation datasets.
+- NASA POWER.
+- NASA GES DISC.
+- NASA Earthdata services.
+- NOAA climate and weather datasets.
+- Other relevant environmental data providers.
+
+Provider integration should be performed through individual adapters.
+
+Each adapter should:
+
+1. Identify the variables it supports.
+2. Check whether it is available.
+3. Validate the incoming request.
+4. Retrieve the requested dataset.
+5. Convert the provider response into ETE domain objects.
+6. Preserve source metadata and provenance.
+7. Handle API errors, timeouts, and missing data.
+
+The team should prioritize a small number of reliable, usable data sources rather than integrating many providers superficially.
+
+Actual provider availability, authentication requirements, spatial coverage, temporal coverage, and licensing should be verified before implementation.
+
+---
+
+# 13. Important Architectural Decisions
+
+These decisions should be preserved while continuing development.
+
+## 13.1 Keep the backend modular
+
+Avoid placing all functionality into one large service or application class.
+
+Each module should have a clearly defined responsibility.
+
+## 13.2 Keep scientific calculations separate from visualization
+
+Visualization should prepare presentation-ready data, not repeat scientific calculations.
+
+Trend Analysis and Statistical Testing remain responsible for their respective algorithms.
+
+## 13.3 Preserve missing observations
+
+Missing observations are represented by `None`.
+
+Do not replace missing values with zero unless an explicit scientific preprocessing operation justifies it.
+
+## 13.4 Preserve provenance
+
+Data should retain information about its source and transformations.
+
+This is essential for reproducibility and scientific trust.
+
+## 13.5 Avoid unsupported statistical claims
+
+A positive or negative slope alone does not establish a statistically significant trend.
+
+A significant statistical result does not establish causation.
+
+## 13.6 Use the existing application infrastructure
+
+New modules should reuse:
+
+- ApplicationModule.
+- ApplicationContext.
+- ServiceRegistry.
+- EventDispatcher.
+- CommandDispatcher.
+- QueryDispatcher.
+- Existing domain models.
+
+Do not independently recreate these systems.
+
+## 13.7 Maintain testability
+
+Every new module should have dedicated tests covering:
+
+- Normal operation.
+- Invalid inputs.
+- Missing dependencies.
+- Failure handling.
+- Lifecycle behaviour.
+- Event integration.
+- Edge cases.
+
+## 13.8 Keep dependencies minimal
+
+Avoid adding large libraries unless they provide a genuine requirement.
+
+The existing Python foundation should remain lightweight and portable.
+
+---
+
+# 14. Recommended Continuation Plan
+
+The following sequence is recommended for the team taking over development.
+
+## Stage 1 — Finish Visualization
+
+Complete Module 23.
+
+- Implement visualization DTOs.
+- Implement visualization services.
+- Implement event integration.
+- Implement selection state.
+- Implement module lifecycle.
+- Write unit tests.
+- Run the full test suite.
+- Run Ruff linting and formatting checks.
+
+## Stage 2 — Finish Scientific Interpretation
+
+Complete Module 24.
+
+- Implement interpretation models.
+- Implement trend interpretation.
+- Implement statistical interpretation.
+- Implement regional interpretation.
+- Implement uncertainty and limitation reporting.
+- Integrate existing scientific modules.
+- Write unit tests.
+- Run the full test suite.
+
+## Stage 3 — Backend Integration
+
+Once both modules are complete:
+
+- Review all module dependencies.
+- Verify application startup.
+- Verify module initialization ordering.
+- Verify event subscriptions.
+- Verify command and query registration.
+- Test workflows involving multiple modules.
+- Confirm failure handling and shutdown behaviour.
+
+## Stage 4 — Data Provider Integration
+
+- Select initial environmental data providers.
+- Implement provider adapters.
+- Retrieve representative datasets.
+- Validate real-world data.
+- Test unit conversions.
+- Test time-series construction.
+- Preserve data provenance.
+
+## Stage 5 — API Layer
+
+Implement a separate backend API layer.
+
+- Expose application operations through HTTP endpoints.
+- Validate incoming requests.
+- Translate requests into commands and queries.
+- Serialize results into API response models.
+- Handle errors consistently.
+- Document the API.
+
+## Stage 6 — Frontend
+
+Develop the React application.
+
+- Dashboard.
+- Variable Explorer.
+- Geographic Region Selector.
+- Time-Series Viewer.
+- Trend Charts.
+- Regional Comparison Maps.
+- Statistical Results Panel.
+- Scientific Interpretation Panel.
+
+## Stage 7 — End-to-End Validation
+
+Test the entire workflow using actual environmental datasets.
+
+A representative workflow:
+
+```text
+Select Environmental Variable
+             |
+             v
+Select Geographical Region
+             |
+             v
+Acquire Environmental Dataset
+             |
+             v
+Validate Dataset
+             |
+             v
+Normalize Measurements
+             |
+             v
+Construct / Register Time Series
+             |
+             v
+Perform Trend Analysis
+             |
+             v
+Run Statistical Tests
+             |
+             v
+Compare Multiple Regions
+             |
+             v
+Prepare Visualization
+             |
+             v
+Generate Scientific Interpretation
+             |
+             v
+Display Results in Frontend
+```
+
+---
+
+# 15. What the Team Should Do First
+
+Before making changes, the incoming developers should:
+
+1. Open the existing repository.
+2. Read `README.md` and `pyproject.toml`.
+3. Inspect the existing `src/earth_twin_engine` structure.
+4. Inspect the corresponding test structure.
+5. Create and activate the Python virtual environment if necessary.
+6. Install the development dependencies.
+7. Run the complete test suite.
+8. Run Ruff linting and formatting checks.
+9. Confirm that the current 22 completed modules still pass.
+
+Setup commands:
+
+```powershell
+py -3.14 -m venv .venv
+
+.\.venv\Scripts\Activate.ps1
+
+python -m pip install --upgrade pip
+
+pip install -e ".[dev]"
+```
+
+Verification:
+
+```powershell
+ruff check src tests
+
+ruff format --check src tests
+
+pytest
+```
+
+Do not start rewriting completed modules simply because a different developer prefers another coding style.
+
+The existing module contracts and tests should be treated as the starting point.
+
+If a genuine integration issue is discovered, fix it with the smallest appropriate change and add a regression test.
+
+---
+
+# 16. Current Limitations and Work Still Required
+
+Although the application architecture and analytical modules are substantially complete, the project is not yet a finished end-user product.
+
+The following work remains:
+
+| Area | Current status |
+|---|---|
+| Application infrastructure | Complete |
+| Domain models | Implemented |
+| Variable discovery | Complete |
+| Data source abstraction | Complete |
+| Region management | Complete |
+| Data acquisition workflow | Complete |
+| Data validation | Complete |
+| Data normalization | Complete |
+| Time-series management | Complete |
+| Trend analysis | Complete |
+| Statistical testing | Complete |
+| Regional comparison | Complete |
+| Visualization backend | Pending |
+| Scientific interpretation | Pending |
+| External provider adapters | Further integration required |
+| HTTP API | Pending |
+| React frontend | Pending |
+| Real-world end-to-end validation | Pending |
+
+A distinction should be maintained between an implemented architecture and a fully operational production integration.
+
+For example, implementing DataSourceManager does not automatically mean that all NASA and NOAA providers have already been connected.
+
+Similarly, implementing RegionalComparisonService does not automatically mean that a complete geographical visualization interface exists.
+
+The remaining work is primarily about completing the presentation and interpretation layers, integrating real data, and connecting the backend to a usable frontend.
+
+---
+
+# 17. Final Project Status
+
+<escape>
+| Component | Completion |
+|---|---:|
+| Application Core | 12 / 12 |
+| Data Management and Scientific Analysis | 10 / 10 |
+| Visualization | 0 / 1 |
+| Scientific Interpretation | 0 / 1 |
+| **Total backend modules** | **22 / 24** |
+</escape>
+
+The most important achievement so far is that ETE already has a substantial modular application and scientific-analysis foundation.
+
+The project is no longer just an initial idea or a basic environmental dashboard. It has:
+
+- A module lifecycle system.
+- Dependency-aware application startup.
+- Event-driven communication.
+- Command and query dispatching.
+- Environmental variable management.
+- Data source abstraction.
+- Geographical region management.
+- Dataset acquisition and validation.
+- Unit normalization.
+- Time-series management and aggregation.
+- Trend analysis.
+- Statistical testing.
+- Regional comparison.
+
+The remaining two backend modules will complete the planned application workflow.
+
+After that, the team can focus on real-world dataset integration, the API, and the frontend experience.
+
+## Final handover note
+
+**The next developer should continue from Module 23 — Visualization.**
+
+Do not restart the architecture, replace the existing infrastructure, or begin the frontend before Modules 23 and 24 are complete.
+
+Use the existing domain contracts, services, events, and tests as the source of truth.
+
+The objective is to finish the existing system coherently, preserve its scientific correctness, and then turn it into a complete, usable Earth science trend-analysis platform.
+
+**Earth Twin Engine — From Environmental Data to Scientific Understanding.**
