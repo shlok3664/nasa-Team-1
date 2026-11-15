@@ -956,6 +956,33 @@ More advanced capabilities such as nonlinear trend detection, seasonal decomposi
 
 The initial goal is to provide a scientifically transparent and reproducible tool that fulfills the complete challenge workflow.
 
+## Run the current prototype API
+
+The current frontend can send its clearly labeled simulated values to the existing Python
+`TrendAnalyzer` through a local FastAPI service. This connects the interface to the statistical
+model; it does not fetch NASA data and is not a trained machine-learning model.
+
+From the repository root, install the optional API and development dependencies, then start the
+backend:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -e ".[api,dev]"
+.\.venv\Scripts\python.exe -m uvicorn earth_twin_engine.api:app --app-dir src --reload --host 127.0.0.1 --port 8000
+```
+
+In another terminal:
+
+```powershell
+cd frontend
+Copy-Item .env.example .env
+npm ci
+npm run dev
+```
+
+The frontend uses `VITE_API_BASE_URL` (default `http://localhost:8000`). Check API availability at
+`/api/v1/health`; API docs are available at `/docs`. See [frontend/README.md](frontend/README.md)
+for test commands and deployment configuration.
+
 # 16. Final Project Objective
 
 Earth Twin Engine aims to make Earth science trend analysis accessible through a unified, modular, and scientifically reproducible platform.
