@@ -1,5 +1,7 @@
 """Details of an event handler failure."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 from uuid import UUID
