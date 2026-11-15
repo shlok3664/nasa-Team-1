@@ -18,7 +18,7 @@ class ScientificInterpretationCompletedEvent(ApplicationEvent):
     result: ScientificInterpretation | None = None
 
     def __post_init__(self) -> None:
-        super().__post_init__()
+        ApplicationEvent.__post_init__(self)
 
         if not isinstance(self.source_event_id, UUID):
             raise TypeError("source_event_id must be a UUID")
@@ -44,7 +44,7 @@ class ScientificInterpretationFailedEvent(ApplicationEvent):
     error_message: str = ""
 
     def __post_init__(self) -> None:
-        super().__post_init__()
+        ApplicationEvent.__post_init__(self)
 
         if self.source_event_id is not None and not isinstance(self.source_event_id, UUID):
             raise TypeError("source_event_id must be a UUID or None")

@@ -16,7 +16,7 @@ class TimeSeriesRegisteredEvent(ApplicationEvent):
     series_id: str
 
     def __post_init__(self) -> None:
-        super().__post_init__()
+        ApplicationEvent.__post_init__(self)
 
         if not isinstance(self.command_id, UUID):
             raise TypeError("command_id must be a UUID")
@@ -37,7 +37,7 @@ class TimeSeriesRemovedEvent(ApplicationEvent):
     series_id: str
 
     def __post_init__(self) -> None:
-        super().__post_init__()
+        ApplicationEvent.__post_init__(self)
 
         if not isinstance(self.command_id, UUID):
             raise TypeError("command_id must be a UUID")
@@ -59,7 +59,7 @@ class TimeSeriesAggregatedEvent(ApplicationEvent):
     result: TimeSeries
 
     def __post_init__(self) -> None:
-        super().__post_init__()
+        ApplicationEvent.__post_init__(self)
 
         if not isinstance(self.command_id, UUID):
             raise TypeError("command_id must be a UUID")
@@ -87,7 +87,7 @@ class TimeSeriesOperationFailedEvent(ApplicationEvent):
     reason: str
 
     def __post_init__(self) -> None:
-        super().__post_init__()
+        ApplicationEvent.__post_init__(self)
 
         if not isinstance(self.command_id, UUID):
             raise TypeError("command_id must be a UUID")

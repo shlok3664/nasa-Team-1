@@ -18,7 +18,7 @@ class RegisterTimeSeriesCommand(ApplicationCommand):
     series: TimeSeries
 
     def __post_init__(self) -> None:
-        super().__post_init__()
+        ApplicationCommand.__post_init__(self)
 
         if not isinstance(self.series, TimeSeries):
             raise TypeError("series must be a TimeSeries")
@@ -31,7 +31,7 @@ class RemoveTimeSeriesCommand(ApplicationCommand):
     series_id: str
 
     def __post_init__(self) -> None:
-        super().__post_init__()
+        ApplicationCommand.__post_init__(self)
 
         if not isinstance(self.series_id, str) or not self.series_id.strip():
             raise ValueError("series_id must be a non-empty string")
@@ -46,7 +46,7 @@ class AggregateTimeSeriesCommand(ApplicationCommand):
     method: AggregationMethod = AggregationMethod.MEAN
 
     def __post_init__(self) -> None:
-        super().__post_init__()
+        ApplicationCommand.__post_init__(self)
 
         if not isinstance(self.series_id, str) or not self.series_id.strip():
             raise ValueError("series_id must be a non-empty string")
@@ -67,7 +67,7 @@ class AggregateSpatialTimeSeriesCommand(ApplicationCommand):
     method: AggregationMethod = AggregationMethod.MEAN
 
     def __post_init__(self) -> None:
-        super().__post_init__()
+        ApplicationCommand.__post_init__(self)
 
         if not isinstance(self.series_ids, tuple):
             raise TypeError("series_ids must be a tuple")

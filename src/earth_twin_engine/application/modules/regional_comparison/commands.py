@@ -15,7 +15,7 @@ class CompareRegionsCommand(ApplicationCommand):
     variable_id: str
 
     def __post_init__(self) -> None:
-        super().__post_init__()
+        ApplicationCommand.__post_init__(self)
 
         if not isinstance(self.region_ids, tuple) or len(self.region_ids) < 2:
             raise InvalidRegionalComparisonError("At least two region IDs must be provided.")

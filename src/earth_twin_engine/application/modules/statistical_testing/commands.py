@@ -19,7 +19,7 @@ class RunStatisticalTestCommand(ApplicationCommand):
     reference_value: float | None = None
 
     def __post_init__(self) -> None:
-        super().__post_init__()
+        ApplicationCommand.__post_init__(self)
 
         if not isinstance(self.method, StatisticalTestMethod):
             raise TypeError("method must be a StatisticalTestMethod.")

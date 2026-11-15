@@ -12,7 +12,7 @@ class AnalyzeTimeSeriesTrendCommand(ApplicationCommand):
     series_id: str
 
     def __post_init__(self) -> None:
-        super().__post_init__()
+        ApplicationCommand.__post_init__(self)
 
         if not isinstance(self.series_id, str) or not self.series_id.strip():
             raise ValueError("series_id must be a non-empty string.")
